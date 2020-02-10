@@ -9,9 +9,10 @@ from data_structures.list.node import Node
 
 
 class SingleLinkedList(object):
-    def __init__(self):
+    def __init__(self, **values):
         self._head = Node()
         self._tail = self._head
+        self._add_init_data(**values)
 
     @property
     def _count(self):
@@ -33,27 +34,34 @@ class SingleLinkedList(object):
         _str = _str.rstrip(", ")
         return f"{_str}]"
 
-    def _add_init_data(self):
-        pass
+    def _add_init_data(self, **values):
+        for _val in values:
+            self.append(_val)
 
-    def _add_node_at_beginning(self, value):
-        _temp_node = Node(value)
-        _temp_node.next = self._head
-        self._head = _temp_node
+    def _add_node_at_beginning(self, value, method="add"):
+        if method == "add":
+            _temp_node = Node(value)
+            _temp_node.next = self._head
+            self._head = _temp_node
+        elif method == "replace":
+            self._head.data = value
 
     def _add_node_at_the_end(self, value):
         _new_node = Node(value)
         self._tail.next = _new_node
         self._tail = _new_node
 
-    def _add_node_at_position(self, position, value):
+    def _add_node_at_position(self, position, value, method="add"):
         _index = 1
         _temp_node = self._head
         while _index <= position:
             if _index == position:
                 _new_node = Node(value)
-                _new_node.next = _temp_node.next
-                _temp_node.next = _new_node
+                if method == "add":
+                    _new_node.next = _temp_node.next
+                    _temp_node.next = _new_node
+                elif method == "replace":
+                    _temp_node.data = value
             _index += 1
             _temp_node = _temp_node.next
 
@@ -62,16 +70,15 @@ class SingleLinkedList(object):
 
     def __setitem__(self, position, value):
         if position == 0:
-            self._add_node_at_beginning(value)
+            self._add_node_at_beginning(value, method="replace")
         elif position == self._count:
             self._add_node_at_the_end(value)
         elif 0 < position < self._count:
-            self._add_node_at_position(position, value)
+            self._add_node_at_position(position, value, method="replace")
         else:
             raise IndexError("Out of Index")
 
     def __getitem__(self, position):
-        print(self._count)
         if position >= self._count:
             raise IndexError("Out of Index")
 
@@ -94,7 +101,7 @@ if __name__ == '__main__':
         s_list[_i] = 1 + _i * 2
         print(s_list)
     print(s_list)
-    s_list.append("Haha")
+    s_list.append(100)
     print(s_list)
     s_list[3] = "Mutation"
     print(s_list)
